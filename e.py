@@ -188,7 +188,7 @@ while True:
     if warning_triggered:
         cv2.putText(frame, "WARNING: Too Close to Object!", (50, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
-        # Play sound if it hasn't been played in the last 0.2 seconds
+        # Play sound if it hasn’t been played in the last 0.2 seconds
         current_time = time.time()
         if current_time - last_play_time >= 2:  # 200 ms cooldown
             sound.play(maxtime=2000)  # Play for 200 ms
@@ -209,6 +209,14 @@ cv2.destroyAllWindows()
 
 """
 
+import pyttsx3
+
+
+engine = pyttsx3.init()
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
 import cv2
 from ultralytics import YOLO
 import numpy as np
@@ -224,7 +232,7 @@ from kaepyi import API_KEY  # Note: Fixed typo from "API-KEY" to "API_KEY"
 
 # Initialize OpenAI client
 client = OpenAI(api_key=API_KEY)
-CHECK_INTERVAL = 1  # Seconds between ChatGPT analyses
+CHECK_INTERVAL = 10  # Seconds between ChatGPT analyses
 
 # Load the pre-trained YOLOv8 model
 model = YOLO("yolov8n.pt")  # Nano model; adjust as needed
@@ -237,7 +245,6 @@ soundleft = mixer.Sound("left.mp3")  # Replace with your sound file path (e.g., 
 last_play_time = 0  # To prevent sound overlap
 last_play_time2 = 0  # To prevent sound overlap
 last_play_time3 = 0  # To prevent sound overlap
-last_play_time4 = 0
 
 # Open the webcam
 cap = cv2.VideoCapture(0)
@@ -380,9 +387,18 @@ while True:
             last_play_time = current_time
 
     # Display ChatGPT analysis if available
-    if current_analysis:
+    
+    """"if current_analysis:
         cv2.putText(frame, current_analysis[:50], (10, 150),  # Truncate for display
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)""""
+
+    if current_analysis:
+    # Show on screen
+    cv2.putText(frame, current_analysis[:50], (10, 150),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+
+    # Speak it out loud
+    speak(current_analysis)
 
     # Show the frame
     cv2.imshow("Object Detection with Proximity Warning", frame)
