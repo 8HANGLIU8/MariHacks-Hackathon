@@ -3,6 +3,7 @@
 
 import pygame
 import time
+#from Felix import direction as x, distance as n
 
 pygame.init()
 pygame.mixer.init()
@@ -41,8 +42,11 @@ while running:
     pygame.display.update()
 
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
             running = False
+
+            #from Felix import direction as x, distance as n
 
         # Changer de direction avec les touches fléchées
         if event.type == pygame.KEYDOWN:
