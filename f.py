@@ -1,221 +1,9 @@
-"""import cv2
-from ultralytics import YOLO
-import numpy as np
-from pygame import mixer
-import time
-from kaepyi import API-KEY
-
-""""""
-import base64
-from openai import OpenAI
-
-client = OpenAI(api_key=API_KEY)
-CHECK_INTERVAL = 10
 
 
-"""
-
-"""
-response = client.responses.create(
-    model="gpt-4o",
-    input=[
-        {
-            "role": "user",
-            "content": [
-                { "type": "input_text", "text": "I am a blind person. You're responsible for my safety. Then, I'll send you an image every 5 seconds. You don't have to respond when there is nothing going on. However, if there's something, if there's information revelant to my safety, please send me a message."},
-                {
-                    "type": "input_image",
-                    "image_url": ""
-                }
-            ]
-        }
-    ]
-)
-
-print(response)
-
-"""
-"""
+from pathlib import Path
+import openai
 
 
-
-
-
-
-# Load the pre-trained YOLOv8 model
-model = YOLO("yolov8n.pt")  # Nano model; adjust as needed
-
-# Initialize pygame mixer for sound
-mixer.init()
-sound = mixer.Sound("Stop.mp3")  # Replace with your sound file path (e.g., "alert.mp3")
-soundright = mixer.Sound("right.mp3")  # Replace with your sound file path (e.g., "alert.mp3")
-soundleft = mixer.Sound("left.mp3")  # Replace with your sound file path (e.g., "alert.mp3")
-last_play_time = 0  # To prevent sound overlap
-last_play_time2 = 0  # To prevent sound overlap
-last_play_time3 = 0  # To prevent sound overlap
-last_play_time4 = 0  # To prevent sound overlap
-
-# Open the webcam
-cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    print("Error: Could not open webcam.")
-    exit()
-
-def frame_to_base64(frame):
-    # Encode frame as JPEG in memory
-    _, buffer = cv2.imencode('.jpg', frame)
-    # Convert to base64
-    base64_image = base64.b64encode(buffer).decode('utf-8')
-    return base64_image
-
-# Function to analyze frame with ChatGPT
-def analyze_frame(frame):
-    base64_image = frame_to_base64(frame)
-    
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",  # Vision-capable model
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": "I am a blind person. You're responsible for my safety. Then, I'll send you an image every 5 seconds. You don't have to respond when there is nothing going on. However, if there's something, if there's information revelant to my safety, please send me a message."},
-                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
-                    ]
-                }
-            ],
-            max_tokens=300
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        return f"Error analyzing frame: {e}"
-# Distance estimation parameters (calibrate these for your setup)
-FOCAL_LENGTH = 1500  # Approximate focal length in pixels (depends on your camera)
-KNOWN_WIDTH = 0.3  # Known width of a reference object in meters (e.g., person's head ~30cm)
-WARNING_DISTANCE = 0.4  # Warning threshold set to 40 cm (0.4 meters)
-
-# Function to estimate distance based on bounding box width
-def estimate_distance(box_width):
-    # Distance = (Known Width * Focal Length) / Perceived Width
-    return (KNOWN_WIDTH * FOCAL_LENGTH) / box_width
-
-# Main loop
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        print("Error: Could not read frame.")
-        break
-
-    """""""
-# Analyze every 5 seconds
-    current_time4 = time.time()
-    if current_time4 - last_check_time4 >= CHECK_INTERVAL:
-        print("Analyzing frame...")
-        analysis = analyze_frame(frame)
-        print(f"ChatGPT Analysis: {analysis}")
-        last_check_time4 = current_time4
-        
-        # Optionally display analysis on frame
-        cv2.putText(frame, "Analyzed", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-
-    """"""
-    # Get frame dimensions and calculate center coordinates
-    height, width = frame.shape[:2]
-    center_x = width // 2  # Integer division for x-coordinate
-    center_y = height // 2  # Integer division for y-coordinate
-
-    # Perform object detection
-    results = model(frame)
-
-    # Flag for warning
-    warning_triggered = False
-
-    # Process detection results
-    for result in results:
-        boxes = result.boxes
-        for box in boxes:
-            x1, y1, x2, y2 = map(int, box.xyxy[0])
-            confidence = box.conf[0]
-            class_id = int(box.cls[0])
-            label = model.names[class_id]
-
-            if confidence > 0.4:
-                # Calculate bounding box width in pixels
-                box_width = x2 - x1
-
-                # Estimate distance
-                distance = estimate_distance(box_width)
-
-                # Draw bounding box and label
-                color = (0, 255, 0)  # Green by default
-                if distance < WARNING_DISTANCE:
-                    color = (0, 0, 255)  # Red if within 40 cm
-                    warning_triggered = True
-                
-                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-                cv2.putText(frame, f"{label} {distance:.2f}m", (x1, y1 - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-                
-                # Add cup detection and direction logic
-                if label == "cup" or label == "mug" or label == "glass" or label == "bottle":
-                    # Draw a circle at the center of the cup
-
-                    cup_center_x = (x1 + x2) // 2  # x-coordinate of cup's center
-                    delta_x = cup_center_x - center_x  # Change in x
-                    threshold = width // 5  # 1/5 of screen width
-                    #draw a line between the center of the screen and the cup
-                    cv2.line(frame, (center_x, center_y), (cup_center_x, center_y), (255, 0, 0), 2)
-                    if delta_x > threshold:
-                        cv2.putText(frame, "Go to the right", (50, 100),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 3)
-                        current_time2 = time.time()
-                        if current_time2 - last_play_time2 >= 2:  # 200 ms cooldown
-                            soundright.play(maxtime=2000)  # Play for 200 ms
-                            last_play_time2 = current_time2
-                    elif delta_x < -threshold:
-                        cv2.putText(frame, "Go to the left", (50, 100),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 3)
-                        current_time3 = time.time()
-                        if current_time3 - last_play_time3 >= 2:  # 200 ms cooldown
-                            soundleft.play(maxtime=2000)  # Play for 200 ms
-                            last_play_time3 = current_time3
-
-    # Draw a point at the center of the screen
-    cv2.circle(frame, (center_x, center_y), 5, (255, 0, 0), -1)  # Blue dot, radius 5, filled
-
-    # Display warning and play sound if an object is within 40 cm
-    if warning_triggered:
-        cv2.putText(frame, "WARNING: Too Close to Object!", (50, 50),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
-        # Play sound if it hasn’t been played in the last 0.2 seconds
-        current_time = time.time()
-        if current_time - last_play_time >= 2:  # 200 ms cooldown
-            sound.play(maxtime=2000)  # Play for 200 ms
-            last_play_time = current_time
-
-    # Show the frame
-    cv2.imshow("Object Detection with Proximity Warning", frame)
-
-    # Exit on 'q'
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Cleanup
-mixer.quit()
-cap.release()
-cv2.destroyAllWindows()
-
-
-"""
-
-import pyttsx3
-
-
-engine = pyttsx3.init()
-def speak(text):
-    engine.say(text)
-    engine.runAndWait()
 
 import cv2
 from ultralytics import YOLO
@@ -394,11 +182,20 @@ while True:
 
     if current_analysis:
     # Show on screen
-    cv2.putText(frame, current_analysis[:50], (10, 150),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+        cv2.putText(frame, current_analysis[:50], (10, 150),
+        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+
 
     # Speak it out loud
-    speak(current_analysis)
+
+    speech_file_path = Path(__file__).parent / "speech.mp3"
+with openai.audio.speech.with_streaming_response.create(
+    model="gpt-4o-mini-tts",
+    voice="alloy",
+    input=ana
+) as response:
+    response.stream_to_file(speech_file_path)
+
 
     # Show the frame
     cv2.imshow("Object Detection with Proximity Warning", frame)
