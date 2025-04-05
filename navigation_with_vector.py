@@ -237,6 +237,7 @@ soundleft = mixer.Sound("left.mp3")  # Replace with your sound file path (e.g., 
 last_play_time = 0  # To prevent sound overlap
 last_play_time2 = 0  # To prevent sound overlap
 last_play_time3 = 0  # To prevent sound overlap
+last_play_time4 = 0
 
 # Open the webcam
 cap = cv2.VideoCapture(0)
