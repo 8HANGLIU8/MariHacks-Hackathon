@@ -13,13 +13,13 @@ while True:
     pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            pygame.mixer.music.load("right.mp3")
+            pygame.mixer.music.load("left.mp3")
             pygame.mixer.music.play(-1)
             pygame.mixer.music.play(0) 
     pygame.mixer.init()
     clock.tick(60)
     
-
+"""
 x = "right"
 if x == "right":
     print("Right")
@@ -38,7 +38,8 @@ elif x == "straight":
     pygame.mixer.music.play("straight.mp3")
 
 pygame.quit()
-"""
+
+
 while True:
 
     x = 1 #direction()
