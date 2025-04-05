@@ -387,15 +387,15 @@ while True:
             last_play_time = current_time
 
     # Display ChatGPT analysis if available
-
+    
     """if current_analysis:
         cv2.putText(frame, current_analysis[:50], (10, 150),  # Truncate for display
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)"""
 
     if current_analysis:
     # Show on screen
-        cv2.putText(frame, current_analysis[:50], (10, 150),
-        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+    cv2.putText(frame, current_analysis[:50], (10, 150),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
 
     # Speak it out loud
     speak(current_analysis)
