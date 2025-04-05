@@ -2,10 +2,7 @@
 import pyttsx3
 
 
-engine = pyttsx3.init()
-def speak(current_analysis):
-    engine.say(text)
-    engine.runAndWait()
+
 
 import cv2
 from ultralytics import YOLO
@@ -186,9 +183,10 @@ while True:
     # Show on screen
         cv2.putText(frame, current_analysis[:50], (10, 150),
         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+    
 
     # Speak it out loud
-    #speak(current_analysis)
+    speak(current_analysis)
 
     # Show the frame
     cv2.imshow("Object Detection with Proximity Warning", frame)
