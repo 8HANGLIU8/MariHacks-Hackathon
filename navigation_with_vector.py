@@ -34,7 +34,7 @@ response = client.responses.create(
 
 print(response)
 
-""""
+"""
 """
 
 
@@ -188,7 +188,7 @@ while True:
     if warning_triggered:
         cv2.putText(frame, "WARNING: Too Close to Object!", (50, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
-        # Play sound if it hasn’t been played in the last 0.2 seconds
+        # Play sound if it hasn't been played in the last 0.2 seconds
         current_time = time.time()
         if current_time - last_play_time >= 2:  # 200 ms cooldown
             sound.play(maxtime=2000)  # Play for 200 ms
@@ -224,7 +224,7 @@ from kaepyi import API_KEY  # Note: Fixed typo from "API-KEY" to "API_KEY"
 
 # Initialize OpenAI client
 client = OpenAI(api_key=API_KEY)
-CHECK_INTERVAL = 10  # Seconds between ChatGPT analyses
+CHECK_INTERVAL = 1  # Seconds between ChatGPT analyses
 
 # Load the pre-trained YOLOv8 model
 model = YOLO("yolov8n.pt")  # Nano model; adjust as needed
