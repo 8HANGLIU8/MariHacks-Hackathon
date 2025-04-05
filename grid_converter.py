@@ -1,5 +1,5 @@
 # Constants
-room_width = round(5.38, 1)   # Actual room width
+room_width = 5.38   # Actual room width
 room_length = 9.3    # Actual room length
 desk_length = 0.6    # Actual desk length
 desk_width = 0.45    # Actual desk width
